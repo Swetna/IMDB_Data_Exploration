@@ -1,0 +1,90 @@
+{initialCollection:'Movie_G_Coll', pipeline:[
+    {
+        $match: {
+            year: {
+                $gte: 1985
+            }
+        }
+    }, {
+        $match: {
+            year: {
+                $lte: 1993
+            }
+        }
+    }, {
+        $lookup: {
+            from: 'Participated_G_Coll',
+            localField: '_id',
+            foreignField: '_id.mid',
+            as: 'partMov'
+        }
+    }, {
+        $unwind: {
+            path: '$partMov'
+        }
+    }, {
+        $match: {
+            $or: [{
+                    'partMov.roles': 'Director'
+                },
+                {
+                    'partMov.roles': 'Producer'
+                }
+            ]
+        }
+    }, {
+        $match: {
+            $nor: [{
+                'partMov.roles': 'Writer'
+            }]
+        }
+    }, {
+        $lookup: {
+            from: 'Person_G_Coll',
+            localField: 'partMov.name',
+            foreignField: 'name',
+            as: 'partPeople'
+        }
+    }, {
+        $unwind: {
+            path: '$partPeople'
+        }
+    }, {
+        $match: {
+            $or: [{
+                    'partPeople.alive': true
+                },
+                {
+                    'partPeople.alive': null
+                }
+            ]
+        }
+    }, {
+        $match: {
+            $nor: [{
+                'partPeople.alive': false
+            }]
+        }
+    }, {
+        $group: {
+            _id: '$partPeople._id',
+            cnt: {
+                $sum: 1
+            },
+            name: {
+                $max: '$partPeople.name'
+            }
+        }
+    }, {
+        $match: {
+            cnt: {
+                $gt: 2
+            }
+        }
+    }, {
+        $project: {
+            _id: 0
+        }
+    }
+]
+}

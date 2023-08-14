@@ -1,0 +1,12 @@
+Create view S3_Writer as 
+Select w.pid as id, p.name as name, w.mid as mid
+from writer as w JOIN person as p on w.pid=p.id 
+WHERE w.mid IN 
+(SELECT x.id as mid 
+FROM 
+(Select id from imdb_jd.movie 
+Where totalVotes > 10000
+ORDER BY rating DESC, id ASC
+Limit 1000
+)as x
+)

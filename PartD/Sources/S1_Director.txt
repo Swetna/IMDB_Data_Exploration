@@ -1,0 +1,7 @@
+Create view S1_Director as 
+Select d.pid as id ,d.mid as mid, p.name as name , p.byear as byear , p.dyear as dyear
+from person as p JOIN director as d on p.id=d.pid 
+Where d.mid in (Select m.id as mid
+ FROM movie as m JOIN moviegenre as mg
+on m.id=mg.mid JOIN genre as g on mg.gid=g.id
+Where g.name="Comedy" AND m.year BETWEEN 1980 AND 1989)

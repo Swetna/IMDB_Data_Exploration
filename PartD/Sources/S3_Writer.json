@@ -1,0 +1,68 @@
+{viewName: 'S3_Writer',
+    initialCollection:"Movies",
+    pipeline:[
+        {
+            $match: {
+                totalvotes: {
+                    $gt: 10000
+                }
+            }
+        }, {
+            $sort: {
+                rating: -1,
+                _id: 1
+            }
+        }, {
+            $limit: 1000
+        }, {
+            $lookup: {
+                from: 'MoviesDenorm',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'movies_data'
+            }
+        }, {
+            $unwind: {
+                path: '$movies_data'
+            }
+        }, {
+            $project: {
+                x: {
+                    $ifNull: [
+                        '$x',
+                        '$false'
+                    ]
+                },
+                'movies_data.writers': 1
+            }
+        }, {
+            $unwind: {
+                path: '$movies_data.writers'
+            }
+        }, {
+            $group: {
+                _id: '$movies_data.writers',
+                written: {
+                    $push: '$_id'
+                }
+            }
+        }, {
+            $lookup: {
+                from: 'People',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'people'
+            }
+        }, {
+            $unwind: {
+                path: '$people'
+            }
+        }, {
+            $project: {
+                name: '$people.name',
+                movies_data: 1,
+                written: 1
+            }
+        }
+    ]
+    }

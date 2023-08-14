@@ -1,0 +1,3 @@
+Select totalvotes
+from Movie_g as m JOIN Participated_G as p on m.ptitle=p.ptitle
+WHERE genres='ACTION' AND p.name LIKE 'lee%' AND totalvotes>=1

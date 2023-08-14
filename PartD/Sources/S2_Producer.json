@@ -1,0 +1,72 @@
+{viewName:'S2_Producer', 
+    initialCollection:"Movies", 
+    pipeline:[
+
+        {
+            $match: {
+                genres: 'Action',
+                runtime: {
+                    $gt: 70
+                },
+                year: {
+                    $gte: 1990
+                }
+            }
+        }, {
+            $match: {
+                year: {
+                    $lte: 1999
+                }
+            }
+        }, {
+            $lookup: {
+                from: 'MoviesDenorm',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'movies'
+            }
+        }, {
+            $unwind: {
+                path: '$movies'
+            }
+        }, {
+            $project: {
+                x: {
+                    $ifNull: [
+                        '$x',
+                        '$false'
+                    ]
+                },
+                'movies.producers': 1
+            }
+        }, {
+            $unwind: {
+                path: '$movies.producers'
+            }
+        }, {
+            $group: {
+                _id: '$movies.producers',
+                produced: {
+                    $push: '$_id'
+                }
+            }
+        }, {
+            $lookup: {
+                from: 'People',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'people'
+            }
+        }, {
+            $unwind: {
+                path: '$people'
+            }
+        }, {
+            $project: {
+                name: '$people.name',
+                byear: '$people.byear',
+                produced: 1
+            }
+        }
+
+    ]}

@@ -1,0 +1,24 @@
+{viewName:'S3_Participated', initialCollection:'S3_Movie_Coll', pipeline:[
+	
+	{
+		$lookup: {
+			from: 'S3_Writer',
+			localField: '_id',
+			foreignField: 'written',
+			as: 'writeMov'
+		}
+	}, {
+		$unwind: {
+			path: '$writeMov'
+		}
+	}, {
+		$project: {
+			_id: 0,
+			pid: '$writeMov._id',
+			mid: '$_id',
+			ptitle: 1,
+			name: '$writeMov.name',
+			role: 'Writer'
+		}
+	}
+]}

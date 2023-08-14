@@ -1,0 +1,7 @@
+
+Create view S3_Movie as 
+Select id , ptitle
+from Movie 
+Where totalVotes > 10000
+ORDER BY rating DESC, id ASC
+Limit 1000

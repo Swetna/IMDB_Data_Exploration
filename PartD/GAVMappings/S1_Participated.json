@@ -1,0 +1,27 @@
+{viewName:'S1_Participated', initialCollection:'S1_Movie', pipeline:[
+    {
+        $lookup: {
+            from: 'S1_Director',
+            localField: '_id',
+            foreignField: 'directed',
+            as: 'dirMov'
+        }
+    }, {
+        $unwind: {
+            path: '$dirMov'
+        }
+    }, {
+        $project: {
+            pid: '$dirMov._id',
+            mid: '$_id',
+            ptitle: 1,
+            name: '$dirMov.name',
+            role: 'Director'
+        }
+    }, {
+        $project: {
+           _id:0
+        }
+    }
+
+]}
