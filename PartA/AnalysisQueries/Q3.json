@@ -1,0 +1,37 @@
+
+
+{initialCollection:"Movies", pipeline:[ 
+   {
+        $unwind: {
+            path: '$genres'
+        }
+    }, {
+        $match: {
+            totalvotes: {
+                $gt: @@TotalVotes@@
+            }
+        }
+    }, {
+        $group: {
+            _id: {
+                genre: '$genres',
+                year: '$year'
+            },
+            avg: {
+                $avg: '$rating'
+            }
+        }
+    }, {
+        $project: {
+            rating: {
+                $round: [
+                    '$avg',
+                    2
+                ]
+            },
+            year: '$_id.year',
+            _id: 0
+        }
+    }
+
+]}

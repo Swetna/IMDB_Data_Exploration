@@ -1,0 +1,61 @@
+
+
+{initialCollection:'Movies', pipeline:[ 
+
+    {
+        $unwind: {
+            path: '$genres'
+        }
+    }, {
+        $match: {
+            year: {
+                $gte: @@InitYear@@,
+                $lte: @@EndYear@@
+            },
+            genres: '@@Genre@@'
+        }
+    }, {
+        $project: {
+            rating: 1,
+            genres: 1,
+            year: 1
+        }
+    }, {
+        $match: {
+            $nor: [{
+                rating: null
+            }]
+        }
+    }, {
+        $sort: {
+            rating: -1
+        }
+    }, {
+        $group: {
+            _id: null,
+            maximum: {
+                $max: '$rating'
+            }
+        }
+    }, {
+        $project: {
+            _id: 0
+        }
+    }, {
+        $group: {
+            _id: '$maximum',
+            minimum: {
+                $min: '$rating'
+            }
+        }
+    }, {
+        $project: {
+            maximum: '$_id',
+            minimum: 1
+        }
+    }, {
+        $project: {
+            _id: 0
+        }
+    }
+]}

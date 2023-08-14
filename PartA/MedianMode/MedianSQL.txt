@@ -1,0 +1,4 @@
+Select attribute as ykpo 
+From @@Relation@@
+Where position= (Select truncate(0.50 *(Count(*)+1),0) as k
+ From @@Relation@@)+ 1

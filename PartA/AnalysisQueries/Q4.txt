@@ -1,0 +1,7 @@
+// REMOVE THIS COMMENT!
+// @@InitYear@@ and @@EndYear@@ are the initial and end years; @@Genre@@ is the genre of interest. 
+// @@InitYear@@, @@EndYear@@ and @@Genre@@ are replaced by the grading software with the actual values.
+
+SELECT *
+FROM Movies
+LIMIT 1

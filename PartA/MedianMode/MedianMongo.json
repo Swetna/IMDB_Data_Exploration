@@ -1,0 +1,121 @@
+
+
+{initialCollection:"@@Relation@@", pipeline:[ 
+    {
+        $sort: {
+            attribute : 1
+        }
+    }, {
+        $match: {
+            $nor: [{
+                attribute : null
+            }]
+        }
+    }, {
+        $group: {
+            _id: null,
+            arrayOfRating: {
+                $push: '$attribute'
+            }
+        }
+    }, {
+        $project: {
+            k: {
+                $trunc: {
+                    $multiply:
+                    [
+                        @@p@@,
+                        {
+                            $add: [
+                                1,
+                                {
+                                    $sum: '$arrayOfRating'
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            arrayOfRating: 1
+        }
+    }, {
+        $project: {
+            alpha: {
+                $subtract: [{
+                        $round: {
+                            $multiply: [
+                                @@p@@,
+                                {
+                                    $add: [
+                                        1,
+                                        {
+                                            $size: '$arrayOfRating'
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    '$k'
+                ]
+            },
+            arrayOfRating: 1,
+            k: 1
+        }
+    }, {
+        $project: {
+            alpha: 1,
+            ykpo: {
+                $arrayElemAt: [
+                    '$arrayOfRating',
+                    {
+                        $add: [
+                            1,
+                            '$k'
+                        ]
+                    }
+                ]
+            }
+        }
+    }, {
+        $project: {
+            alpha: 1,
+            yk: {
+                $arrayElemAt: [
+                    '$arrayOfRating',
+                    '$k'
+                ]
+            },
+            ykpo: {
+                $arrayElemAt: [
+                    '$arrayOfRating',
+                    {
+                        $add: [
+                            1,
+                            '$k'
+                        ]
+                    }
+                ]
+            }
+        }
+    }, {
+        $project: {
+            attribute: {
+                $add: [
+                    '$yk',
+                    {
+                        $multiply: [
+                            '$alpha',
+                            {
+                                $subtract: [
+                                    '$ykpo',
+                                    '$yk'
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    }
+]}

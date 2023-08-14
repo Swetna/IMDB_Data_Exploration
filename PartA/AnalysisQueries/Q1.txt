@@ -1,0 +1,8 @@
+
+SELECT rating, count(*) as freq
+FROM Movie as m JOIN MovieGenre as mg on m.id=mg.mid 
+JOIN Genre as g on mg.gid=g.id
+WHERE (year BETWEEN @@InitYear@@ AND @@EndYear@@)
+AND (g.name='@@Genre@@')
+GROUP BY m.rating 
+
